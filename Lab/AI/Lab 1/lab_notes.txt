@@ -1,0 +1,327 @@
+================================================================================
+                     ARTIFICIAL INTELLIGENCE — LAB 1 NOTES
+                       Topic: Search, Problem Solving & Fundamentals
+================================================================================
+
+Subject : Artificial Intelligence
+Topics  : Backtracking, Backpropagation, Problem Types, Search Strategies
+
+________________________________________________________________________________
+
+TABLE OF CONTENTS
+-----------------
+  1. Introduction to Problem Solving in AI
+  2. Backtracking
+  3. Backpropagation
+  4. Types of Problems
+       4.1 Well-Defined Problems
+       4.2 Constraint Satisfaction Problems (CSP)
+  5. Classic Problem Examples
+  6. Search Strategies
+       6.1 Uninformed Search
+       6.2 Informed Search
+       6.3 Adversarial Search
+  7. Key Differences (Quick Reference)
+
+________________________________________________________________________________
+
+
+1. INTRODUCTION TO PROBLEM SOLVING IN AI
+==========================================
+
+  AI problem solving = finding a sequence of actions that leads from an
+  initial state to a desired goal state.
+
+  Key components:
+    - Initial State : The starting configuration of the problem.
+    - Goal State    : The desired final configuration (also called goal/final state).
+    - State Space   : All possible states reachable from the initial state.
+    - Actions       : Moves that transition from one state to another.
+    - Solution      : A sequence of actions from initial state to goal state.
+
+________________________________________________________________________________
+
+
+2. BACKTRACKING
+================
+
+  Definition:
+    A technique for solving problems by exploring all possible options and
+    abandoning a partial solution as soon as it violates a constraint or
+    hits a dead end, then trying the next option.
+
+  Key Idea: "Try → Fail → Undo → Try Again"
+
+  How it works:
+    1. Start from the initial state.
+    2. Try a choice at each step.
+    3. If it leads to a dead end or breaks a constraint → UNDO (backtrack).
+    4. Try the next available option.
+    5. Repeat until a solution is found or all options are exhausted.
+
+  Visual (Tree):
+              [Start]
+             /       \
+          [A]         [B]
+         /   \           \
+       [A1] [A2]✗      [B1]✓  ← Solution
+    ✗ = Dead end (backtrack) | ✓ = Valid
+
+  Applications: Maze solving, Sudoku, N-Queens, Map Colouring
+
+________________________________________________________________________________
+
+
+3. BACKPROPAGATION
+===================
+
+  Definition:
+    A supervised learning algorithm used to TRAIN artificial neural networks
+    by propagating errors backwards through the network to adjust weights.
+
+  How it works (conceptually):
+    1. FORWARD PASS  : Input flows through the network → produces a prediction.
+    2. ERROR CHECK   : Compare prediction to the actual target → calculate error.
+    3. BACKWARD PASS : Error is sent backwards through each layer.
+    4. WEIGHT UPDATE : Weights are adjusted to reduce the error.
+    5. Repeat over many iterations until the network learns.
+
+  !! IMPORTANT — Common Confusion !!
+  +-------------------------+---------------------------+
+  | BACKTRACKING            | BACKPROPAGATION           |
+  +-------------------------+---------------------------+
+  | Used in Search/CSP      | Used in Neural Networks   |
+  | Undoes bad choices      | Adjusts network weights   |
+  | No learning involved    | Core of ML/AI training    |
+  | Example: Maze, N-Queens | Example: Training a model |
+  +-------------------------+---------------------------+
+
+________________________________________________________________________________
+
+
+4. TYPES OF PROBLEMS
+=====================
+
+  4.1 WELL-DEFINED PROBLEMS
+  --------------------------
+
+  Definition:
+    A problem with a clearly fixed INITIAL STATE and GOAL STATE, where it is
+    always clear what the start is, what the goal is, and when it is reached.
+
+  Characteristics:
+    ✔ Start and end conditions are known and fixed.
+    ✔ A definitive solution path exists.
+
+  Examples:
+    - Maze Problem      : Start = entrance, Goal = exit
+    - Route Finding     : Start = City A, Goal = City B
+    - Path Optimization : Find the shortest route between two points
+
+  Structure:
+    [Initial State] → [Intermediate States] → [Goal State]
+
+
+  4.2 CONSTRAINT SATISFACTION PROBLEMS (CSP)
+  -------------------------------------------
+
+  Definition:
+    A problem defined by VARIABLES, DOMAINS, and CONSTRAINTS. The goal is to
+    assign values to all variables such that all constraints are satisfied.
+
+  Three core components:
+    - Variables   : Things to be assigned (e.g., cells in Sudoku)
+    - Domain      : Possible values for each variable (e.g., digits 1–9)
+    - Constraints : Rules that the assignment must follow (e.g., no repeats in a row)
+
+  Key Terms:
+    - Consistent Assignment : Does not violate any constraint.
+    - Complete Assignment   : Every variable has been assigned a value.
+    - Solution              : An assignment that is both complete AND consistent.
+
+  Examples:
+    - Sudoku         : Variables = cells, Domain = 1–9, Constraints = no row/col/box repeats
+    - N-Queens       : Variables = queen positions, Constraints = no two queens attack each other
+    - Map Colouring  : Variables = regions, Domain = colours, Constraints = no adjacent same colour
+
+
+  COMPARISON: Well-Defined Problem vs CSP
+  ----------------------------------------
+  +----------------------------+-----------------------------+
+  | WELL-DEFINED PROBLEM       | CSP                         |
+  +----------------------------+-----------------------------+
+  | Fixed initial & goal state | Variables + Domains +       |
+  |                            | Constraints defined         |
+  | Goal = reach a state       | Goal = satisfy constraints  |
+  | Uses state-space search    | Uses constraint propagation |
+  | Example: Maze, Route Find  | Example: Sudoku, N-Queens   |
+  +----------------------------+-----------------------------+
+
+________________________________________________________________________________
+
+
+5. CLASSIC PROBLEM EXAMPLES
+=============================
+
+  MAZE PROBLEM
+  → Type        : Well-Defined Problem
+  → Initial State: Agent at the entrance
+  → Goal State  : Agent reaches the exit
+  → Solved Using: Backtracking / BFS / DFS
+
+  SUDOKU
+  → Type        : CSP
+  → Variables   : 81 cells of a 9×9 grid
+  → Domain      : Digits 1–9
+  → Constraints : No digit repeats in any row, column, or 3×3 box
+  → Solved Using: Backtracking + Constraint Propagation
+
+  PATH OPTIMIZATION
+  → Type        : Well-Defined Problem
+  → Goal        : Find the shortest/cheapest path between two nodes in a graph
+  → Solved Using: A* Search, Dijkstra's Algorithm, UCS
+
+  MAP COLOURING PROBLEM
+  → Type        : CSP
+  → Variables   : Regions/countries on a map
+  → Domain      : A set of colours (typically 3–4)
+  → Constraints : No two adjacent regions can share the same colour
+  → Key Fact    : The Four Colour Theorem — any map needs at most 4 colours
+
+  N-QUEENS PROBLEM
+  → Type        : CSP
+  → Goal        : Place N queens on an N×N chessboard with no two queens
+                  threatening each other
+  → Constraints : No two queens share the same row, column, or diagonal
+  → Example (4-Queens solution):
+        . Q . .
+        . . . Q
+        Q . . .
+        . . Q .
+
+________________________________________________________________________________
+
+
+6. SEARCH STRATEGIES
+=====================
+
+  6.1 UNINFORMED SEARCH (Blind Search)
+  --------------------------------------
+
+  Definition:
+    Explores the state space with NO extra knowledge about the problem.
+    Does not know how close any state is to the goal — searches blindly.
+
+  Common Algorithms:
+    (a) BFS — Breadth-First Search
+        - Explores all nodes level by level (shallow first).
+        - Guarantees the shortest path (by number of steps).
+        - Uses a Queue (FIFO).
+
+    (b) DFS — Depth-First Search
+        - Explores as deep as possible before backtracking.
+        - Does NOT guarantee shortest path.
+        - Uses a Stack (LIFO) or recursion.
+
+    (c) Uniform Cost Search (UCS)
+        - Expands the node with the lowest path cost first.
+        - Optimal for weighted graphs.
+
+    (d) Depth-Limited Search (DLS)
+        - DFS with a set maximum depth to prevent infinite loops.
+
+    (e) Iterative Deepening DFS (IDDFS)
+        - Combines benefits of BFS (completeness) and DFS (low memory).
+        - Runs DLS repeatedly with increasing depth limits.
+
+
+  6.2 INFORMED SEARCH (Heuristic Search)
+  ----------------------------------------
+
+  Definition:
+    Uses a HEURISTIC — extra knowledge about the problem — to guide the
+    search more efficiently towards the goal.
+
+  Heuristic h(n): An estimate of how far node n is from the goal.
+
+  Common Algorithms:
+    (a) Greedy Best-First Search
+        - Always expands the node that seems closest to the goal.
+        - Fast but can get stuck and is NOT always optimal.
+
+    (b) A* Search — Most Widely Used
+        - Balances actual cost from start AND estimated cost to goal.
+        - Complete and optimal when heuristic is well-chosen.
+        - Used in: GPS navigation, game AI, robotics.
+
+    (c) Hill Climbing
+        - Moves to the best neighbouring state at each step.
+        - Can get stuck at local maxima/minima.
+
+
+  6.3 ADVERSARIAL SEARCH (Game Search)
+  ---------------------------------------
+
+  Definition:
+    Used when TWO agents with OPPOSING goals are competing. The AI must
+    plan while considering what the opponent will do.
+
+  Setting:
+    - MAX player : the AI → wants to MAXIMIZE its score
+    - MIN player : the opponent → wants to MINIMIZE AI's score
+
+  (a) Minimax Algorithm
+      - Builds a game tree and evaluates all possible moves.
+      - MAX picks the highest-value move; MIN picks the lowest.
+      - Assumes both players play OPTIMALLY.
+
+      Game Tree Example:
+               MAX
+              /   \
+           3        5   ← MAX picks 5
+          / \      / \
+         3   2    5   1   ← MIN picks min of each pair
+
+  (b) Alpha-Beta Pruning
+      - An optimization of Minimax.
+      - Skips branches that cannot affect the final decision.
+      - Same result as Minimax but much faster.
+
+  Applications: Chess, Tic-Tac-Toe, Go, Checkers
+
+________________________________________________________________________________
+
+
+7. KEY DIFFERENCES — QUICK REFERENCE
+======================================
+
+  Uninformed vs Informed Search
+  +-----------------------------+----------------------------+
+  | UNINFORMED SEARCH           | INFORMED SEARCH            |
+  +-----------------------------+----------------------------+
+  | No extra knowledge used     | Uses heuristic h(n)        |
+  | Explores blindly            | Guided towards goal        |
+  | Generally slower            | Generally faster           |
+  | Examples: BFS, DFS, UCS     | Examples: A*, Greedy       |
+  +-----------------------------+----------------------------+
+
+  Adversarial vs Non-Adversarial Search
+  +------------------------------+-----------------------------+
+  | ADVERSARIAL SEARCH           | NON-ADVERSARIAL SEARCH      |
+  +------------------------------+-----------------------------+
+  | Two opposing agents          | Single agent                |
+  | Competitive environment      | Solo/cooperative            |
+  | Considers opponent's moves   | Only own moves              |
+  | Examples: Chess, Tic-Tac-Toe | Examples: Maze, GPS routing |
+  | Algorithms: Minimax, α-β     | Algorithms: BFS, DFS, A*    |
+  +------------------------------+-----------------------------+
+
+  Real-World Connections:
+    → Google Maps / GPS         → A* Search (Informed)
+    → Chess engines (Stockfish) → Minimax + Alpha-Beta
+    → Sudoku / Puzzle solvers   → Backtracking + CSP
+    → Neural network training   → Backpropagation
+
+================================================================================
+                          END OF LAB 1 NOTES — AI
+================================================================================
