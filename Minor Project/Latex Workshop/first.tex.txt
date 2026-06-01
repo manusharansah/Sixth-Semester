@@ -1,0 +1,196 @@
+% ============================================================
+% DAY 1 — LaTeX Workshop
+% Author: Manu Sharan Kumar
+% Instruction: 
+% - Copy all contents
+% - Change the file to .tex 
+% - Run each code snippet separately to see the output
+
+% ============================================================
+
+
+% ────────────────────────────────────────────────────────────
+% SNIPPET 1: Getting started with LaTeX
+% ────────────────────────────────────────────────────────────
+% - \documentclass sets the type and look of the document
+%   → [12pt] = base font size, [a4paper] = page size
+%   → 'article' is the class (others: report, book, beamer)
+% - \author, \date are metadata — used if you call \maketitle
+% - Everything visible MUST go inside \begin{document}...\end{document}
+% - \LaTeX\ is a built-in command that prints the LaTeX logo
+%   → the trailing backslash (\) adds a space after the logo
+
+\documentclass[12pt,a4paper]{article}
+\author{Manu Sharan Kumar}
+\date{1 Jun 2026}
+\begin{document}
+\maketitle
+    This is my first \LaTeX\ document
+\end{document}
+
+
+% ────────────────────────────────────────────────────────────
+% SNIPPET 2: Paragraphs and the using package(lipsum) in Latex
+% ────────────────────────────────────────────────────────────
+% - \usepackage{} loads extra features (called packages)
+%   → 'lipsum' generates dummy Lorem Ipsum text for testing
+% - \lipsum[1] prints the 1st Lorem Ipsum paragraph
+% - \par explicitly ends a paragraph and starts a new one
+%   → blank line in source code also works the same way
+% NOTE: \documnetclass below has a typo — correct is \documentclass
+
+\documentclass[12pt,a4paper]{article}
+\usepackage{lipsum}
+\begin{document}
+\lipsum[1]
+\par \lipsum[2]
+\end{document}
+
+
+% ────────────────────────────────────────────────────────────
+% SNIPPET 3: Text Alignment — flushleft, flushright, center
+% ────────────────────────────────────────────────────────────
+% - LaTeX uses environments (\begin{}...\end{}) for alignment
+% - Three built-in alignment environments:
+%   → flushleft  = left-aligned text (default in most classes)
+%   → flushright = right-aligned text
+%   → center     = centered text
+% - Each block affects only the text inside it
+
+\documentclass[12pt,a4paper]{article}
+\usepackage{lipsum}
+\begin{document}
+\begin{flushleft}
+\lipsum[1]
+\end{flushleft}
+\begin{flushright}
+\lipsum[2]
+\end{flushright}
+\begin{center}
+\lipsum[3]
+\end{center}
+\end{document}
+
+
+% ────────────────────────────────────────────────────────────
+% SNIPPET 4: Paragraph Indentation with \parindent
+% ────────────────────────────────────────────────────────────
+% - \setlength changes the value of a length variable
+% - \parindent controls how much the first line of a paragraph
+%   is indented; default is usually ~15–20pt
+%   → here we set it to 50pt (larger indent)
+% - The change applies from that point forward in the document
+%   → \lipsum[1] uses old indent; \lipsum[2] uses 50pt indent
+
+\documentclass[12pt,a4paper]{article}
+\usepackage{lipsum}
+\begin{document}
+\lipsum[1] \par
+\setlength{\parindent}{50pt}
+\lipsum[2]
+\end{document}
+
+
+% ────────────────────────────────────────────────────────────
+% SNIPPET 5: Multi-column Layout (commented out for reference)
+% ────────────────────────────────────────────────────────────
+% - 'report' class suits longer documents (chapters, sections)
+% - \usepackage[...]{geometry} controls page margins
+%   → top/bottom = 1in, inner (binding side) = 1.5in, outer = 1in
+% - \usepackage{multicol} enables multi-column text
+% - \begin{multicols}{3} splits content into 3 columns
+%   → useful for newsletters, indexes, reference sheets
+
+\documentclass[12pt,a4paper]{report}
+\usepackage[top=1in, bottom=1in, inner=1.5in, outer=1in]{geometry}
+\usepackage{multicol}
+\usepackage{lipsum}
+\begin{document}
+\begin{multicols}{3}
+\lipsum[1-5]
+\end{multicols}
+\end{document}
+
+
+% ────────────────────────────────────────────────────────────
+% SNIPPET 6: Line Break with \\ (commented out for reference)
+% ────────────────────────────────────────────────────────────
+% - \\ forces a line break at that exact point
+%   → unlike \par, it does NOT start a new paragraph
+%   → no extra vertical spacing is added
+% - Use sparingly — LaTeX handles line breaks automatically
+
+\documentclass[12pt,a4paper]{report}
+\usepackage[top=1in, bottom=1in, inner=1.5in, outer=1in]{geometry}
+\usepackage{lipsum}
+\begin{document}
+\lipsum[1]  \\ \lipsum[2]
+\end{document}
+
+
+% ────────────────────────────────────────────────────────────
+% SNIPPET 7: Fonts, Spacing, and Text Formatting
+% ────────────────────────────────────────────────────────────
+% - \usepackage{times} switches the document font to Times New Roman
+% - \vspace{20pt} adds vertical space of 20pt between elements
+% - \vfill pushes content to the bottom of the page (like "spring")
+% - \lipsum[1-2] prints Lorem Ipsum paragraphs 1 through 2
+
+\documentclass[12pt,a4paper]{report}
+\usepackage[top=1in, bottom=1in, inner=1.5in, outer=1in]{geometry}
+\usepackage{lipsum}
+\usepackage{times}   % → switches body font to Times New Roman
+\begin{document}
+
+\lipsum[1]       
+% \vspace{20pt}    % → fixed vertical gap of 20 points
+\vfill           % → pushes following content to page bottom
+
+\lipsum[1-2]
+
+% ── Font families ────────────────────────────────────────────
+% - \rmfamily = Roman/serif (default in most classes)
+% - \sffamily = Sans-serif
+% - \ttfamily = Typewriter/monospace
+
+\rmfamily   
+
+% ── Text emphasis commands ───────────────────────────────────
+% - \textbf{}         → bold
+% - \textit{}         → italic
+% - \underline{}      → underlined
+% - Commands can be nested — order does not change the output
+%   but nesting order can affect spacing slightly
+
+Manu Sharan Kumar \textbf{\underline{\textit{is an engineering student.}}}
+He studies in Advanced College of Engineering and Management.
+
+\textbf{Manu Sharan Kumar} \par
+\textbf{\textit{\underline{Manu Sharan Kumar}}} \par    % bold → italic → underline
+\textit{\textbf{\underline{Manu Sharan Kumar}}} \par    % italic → bold → underline
+\underline{\textit{\textbf{Manu Sharan Kumar}}}         % underline → italic → bold
+% → all three produce the same visual result
+
+% ── Horizontal spacing ───────────────────────────────────────
+% - \hspace{20pt} inserts a fixed horizontal gap of 20pt
+% - \hfill pushes the next word to the right margin (like tab)
+
+% hello \hspace{20pt}  my students    % fixed gap
+% hello \hfill         my students    % flush to right margin
+
+% ── Font sizes ───────────────────────────────────────────────
+% - Font size commands are scoped with { } braces
+% - Size commands from smallest to largest:
+%   \tiny  \scriptsize  \footnotesize  \small  \normalsize
+%   \large  \Large  \LARGE  \huge  \Huge
+
+the {\tiny tiny font size} is set,
+the {\huge huge font size} is set and the {\footnotesize footnotesize font size} is set.
+
+% ── Special characters ───────────────────────────────────────
+% - % is a comment in LaTeX — to print it, escape with \%
+% - Similarly: \$ \& \# \_ \{ \} for other special chars
+
+50\%   % → prints "50%" in the output PDF
+
+\end{document}
