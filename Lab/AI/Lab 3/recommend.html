@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Literature recommender</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/3.1.0/iconfont/tabler-icons.min.css">
+<style>
+    :root {
+        --bg-primary: #ffffff;
+        --bg-secondary: #f7f7f5;
+        --bg-tertiary: #f0efec;
+        --text-primary: #1a1a1a;
+        --text-secondary: #6b6b68;
+        --text-tertiary: #9b9b97;
+        --border-tertiary: rgba(0,0,0,0.08);
+        --border-secondary: rgba(0,0,0,0.14);
+        --accent: #534AB7;
+        --accent-fill: #EEEDFE;
+        --accent-text: #3C3489;
+        --radius-md: 8px;
+        --radius-lg: 12px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+        :root {
+            --bg-primary: #1c1c1a;
+            --bg-secondary: #242422;
+            --bg-tertiary: #2c2c2a;
+            --text-primary: #f5f5f3;
+            --text-secondary: #b4b2a9;
+            --text-tertiary: #888780;
+            --border-tertiary: rgba(255,255,255,0.08);
+            --border-secondary: rgba(255,255,255,0.14);
+            --accent: #AFA9EC;
+            --accent-fill: #3C3489;
+            --accent-text: #CECBF6;
+        }
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+        margin: 0;
+        min-height: 100vh;
+        background: var(--bg-tertiary);
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+        color: var(--text-primary);
+        padding: 48px 20px;
+    }
+
+    .wrap { max-width: 720px; margin: 0 auto; }
+
+    header { margin-bottom: 32px; }
+
+    .eyebrow {
+        font-size: 13px;
+        color: var(--text-tertiary);
+        margin: 0 0 6px;
+        letter-spacing: 0.02em;
+    }
+
+    h1 {
+        margin: 0 0 8px;
+        font-size: 24px;
+        font-weight: 500;
+        letter-spacing: -0.01em;
+    }
+
+    header p {
+        color: var(--text-secondary);
+        margin: 0;
+        font-size: 15px;
+        line-height: 1.6;
+        max-width: 56ch;
+    }
+
+    .filters {
+        background: var(--bg-primary);
+        border: 0.5px solid var(--border-tertiary);
+        border-radius: var(--radius-lg);
+        padding: 24px;
+        margin-top: 28px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 16px;
+    }
+
+    .field label {
+        display: block;
+        font-size: 12px;
+        color: var(--text-secondary);
+        margin-bottom: 6px;
+        font-weight: 500;
+    }
+
+    select {
+        width: 100%;
+        height: 38px;
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        border: 0.5px solid var(--border-secondary);
+        border-radius: var(--radius-md);
+        padding: 0 12px;
+        font-size: 14px;
+        font-family: inherit;
+        appearance: none;
+        cursor: pointer;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%239b9b97' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        transition: border-color 0.15s ease;
+    }
+
+    select:hover { border-color: var(--accent); }
+    select:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px var(--accent-fill);
+    }
+
+    select:disabled { opacity: 0.5; cursor: default; }
+
+    .actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 16px;
+    }
+
+    button {
+        font-family: inherit;
+        font-size: 14px;
+        font-weight: 500;
+        padding: 0 18px;
+        height: 38px;
+        border-radius: var(--radius-md);
+        cursor: pointer;
+        border: 0.5px solid var(--border-secondary);
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        transition: background 0.15s ease, transform 0.05s ease;
+    }
+
+    button:hover { background: var(--bg-secondary); }
+    button:active { transform: scale(0.98); }
+    button:disabled { opacity: 0.5; cursor: default; }
+
+    .btn-primary {
+        background: var(--accent);
+        color: #ffffff;
+        border-color: var(--accent);
+    }
+    .btn-primary:hover { background: var(--accent-text); }
+
+    .btn-text {
+        border: none;
+        background: none;
+        color: var(--text-secondary);
+        padding: 0 8px;
+    }
+    .btn-text:hover { background: none; color: var(--text-primary); }
+
+    .results { margin-top: 36px; }
+
+    .results-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-bottom: 14px;
+    }
+
+    .results-header h2 {
+        font-size: 16px;
+        font-weight: 500;
+        margin: 0;
+    }
+
+    .results-count {
+        font-size: 13px;
+        color: var(--text-tertiary);
+    }
+
+    .legend {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        font-size: 12px;
+        color: var(--text-tertiary);
+        margin-bottom: 16px;
+    }
+
+    .card {
+        background: var(--bg-primary);
+        border: 0.5px solid var(--border-tertiary);
+        border-radius: var(--radius-lg);
+        padding: 16px 18px;
+        margin-bottom: 10px;
+        transition: border-color 0.15s ease;
+        display: flex;
+        gap: 14px;
+        align-items: flex-start;
+    }
+
+    .card:hover { border-color: var(--border-secondary); }
+
+    .rank {
+        flex-shrink: 0;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: var(--bg-secondary);
+        color: var(--text-secondary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        font-weight: 500;
+    }
+
+    .card-body { flex: 1; min-width: 0; }
+
+    .card-title {
+        font-size: 15px;
+        font-weight: 500;
+        line-height: 1.5;
+        margin-bottom: 10px;
+    }
+
+    .tags {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    .tag {
+        font-size: 12px;
+        padding: 3px 10px;
+        border-radius: 999px;
+        border: 0.5px solid var(--border-tertiary);
+        color: var(--text-secondary);
+    }
+
+    .tag.match {
+        background: var(--accent-fill);
+        color: var(--accent-text);
+        border-color: transparent;
+        font-weight: 500;
+    }
+
+    .score-pill {
+        margin-left: auto;
+        font-size: 12px;
+        color: var(--text-tertiary);
+        white-space: nowrap;
+    }
+
+    .empty-state, .status-state {
+        text-align: center;
+        padding: 56px 20px;
+        color: var(--text-secondary);
+        border: 0.5px dashed var(--border-secondary);
+        border-radius: var(--radius-lg);
+    }
+
+    .empty-state i, .status-state i {
+        font-size: 28px;
+        color: var(--text-tertiary);
+        margin-bottom: 12px;
+        display: block;
+    }
+
+    .empty-state strong, .status-state strong {
+        display: block;
+        color: var(--text-primary);
+        font-size: 15px;
+        font-weight: 500;
+        margin-bottom: 4px;
+    }
+
+    .empty-state p, .status-state p { margin: 0; font-size: 14px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+    <header>
+        <p class="eyebrow">Literature network</p>
+        <h1>Find your next paper</h1>
+        <p>Choose a domain, methodology, and author &mdash; any combination, all optional &mdash; to get the top 5 matching papers from <code>network_data.json</code>.</p>
+    </header>
+
+    <div class="filters">
+        <div class="field">
+            <label for="domain-select">Domain</label>
+            <select id="domain-select" disabled>
+                <option value="">Any domain</option>
+            </select>
+        </div>
+        <div class="field">
+            <label for="method-select">Methodology</label>
+            <select id="method-select" disabled>
+                <option value="">Any methodology</option>
+            </select>
+        </div>
+        <div class="field">
+            <label for="author-select">Author</label>
+            <select id="author-select" disabled>
+                <option value="">Any author</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="actions">
+        <button class="btn-primary" id="recommend-btn" disabled>Recommend papers</button>
+        <button class="btn-text" id="reset-btn" disabled>Reset filters</button>
+    </div>
+
+    <div class="results">
+        <div class="results-header" id="results-header" style="display:none;">
+            <h2>Top recommendations</h2>
+            <span class="results-count" id="results-count"></span>
+        </div>
+        <div class="legend" id="legend" style="display:none;">
+            <span>Highlighted tags show why a paper matched</span>
+        </div>
+        <div id="results-container"></div>
+    </div>
+</div>
+
+<script>
+const domainSelect = document.getElementById('domain-select');
+const methodSelect = document.getElementById('method-select');
+const authorSelect = document.getElementById('author-select');
+const recommendBtn = document.getElementById('recommend-btn');
+const resetBtn = document.getElementById('reset-btn');
+const resultsContainer = document.getElementById('results-container');
+const resultsHeader = document.getElementById('results-header');
+const resultsCount = document.getElementById('results-count');
+const legend = document.getElementById('legend');
+
+const TOP_N = 5;
+let papers = [];
+
+function uniqueSorted(arr) {
+    return [...new Set(arr)].sort();
+}
+
+function populateSelect(select, values) {
+    values.forEach(v => {
+        const opt = document.createElement('option');
+        opt.value = v;
+        opt.textContent = v;
+        select.appendChild(opt);
+    });
+}
+
+function enableUI() {
+    [domainSelect, methodSelect, authorSelect, recommendBtn, resetBtn].forEach(el => el.disabled = false);
+}
+
+async function loadData() {
+    try {
+        const res = await fetch('network_data.json');
+        if (!res.ok) throw new Error('Request failed: ' + res.status);
+        const data = await res.json();
+
+        const nodes = {};
+        data.nodes.forEach(n => nodes[n.id] = n);
+
+        const paperIds = data.nodes.filter(n => n.group === 'Paper').map(n => n.id);
+
+        const domainOf = {};
+        const methodOf = {};
+        const authorOf = {};
+
+        data.links.forEach(link => {
+            const src = typeof link.source === 'object' ? link.source.id : link.source;
+            const tgt = typeof link.target === 'object' ? link.target.id : link.target;
+            if (link.label === 'BELONGS_TO' && paperIds.includes(src)) domainOf[src] = tgt;
+            else if (link.label === 'UTILIZED' && paperIds.includes(src)) methodOf[src] = tgt;
+            else if (link.label === 'AUTHORED' && paperIds.includes(tgt)) authorOf[tgt] = src;
+        });
+
+        papers = paperIds.map(id => ({
+            title: id,
+            domain: domainOf[id] || '',
+            methodology: methodOf[id] || '',
+            author: authorOf[id] || ''
+        }));
+
+        populateSelect(domainSelect, uniqueSorted(papers.map(p => p.domain).filter(Boolean)));
+        populateSelect(methodSelect, uniqueSorted(papers.map(p => p.methodology).filter(Boolean)));
+        populateSelect(authorSelect, uniqueSorted(papers.map(p => p.author).filter(Boolean)));
+
+        enableUI();
+        recommend();
+    } catch (err) {
+        resultsContainer.innerHTML = `
+            <div class="status-state">
+                <i class="ti ti-alert-triangle" aria-hidden="true"></i>
+                <strong>Couldn't load network_data.json</strong>
+                <p>Make sure this file is served alongside network_data.json (opening it directly via file:// may block fetch in some browsers &mdash; try a local server).</p>
+            </div>`;
+    }
+}
+
+function recommend() {
+    const domain = domainSelect.value;
+    const method = methodSelect.value;
+    const author = authorSelect.value;
+    const anyFilterSet = domain || method || author;
+
+    const scored = papers.map(p => {
+        let score = 0;
+        const matches = { domain: false, methodology: false, author: false };
+        if (domain && p.domain === domain) { score++; matches.domain = true; }
+        if (method && p.methodology === method) { score++; matches.methodology = true; }
+        if (author && p.author === author) { score++; matches.author = true; }
+        return { paper: p, score, matches };
+    });
+
+    let results;
+    if (!anyFilterSet) {
+        results = [...scored].sort((a, b) => a.paper.title.localeCompare(b.paper.title));
+    } else {
+        results = scored
+            .filter(r => r.score > 0)
+            .sort((a, b) => b.score - a.score || a.paper.title.localeCompare(b.paper.title));
+    }
+
+    renderResults(results.slice(0, TOP_N), anyFilterSet, results.length);
+}
+
+function renderResults(results, anyFilterSet, totalMatches) {
+    resultsContainer.innerHTML = '';
+
+    if (results.length === 0) {
+        resultsHeader.style.display = 'none';
+        legend.style.display = 'none';
+        resultsContainer.innerHTML = `
+            <div class="empty-state">
+                <i class="ti ti-search-off" aria-hidden="true"></i>
+                <strong>No matching papers</strong>
+                <p>Try a different combination of domain, methodology, or author.</p>
+            </div>`;
+        return;
+    }
+
+    resultsHeader.style.display = 'flex';
+    legend.style.display = anyFilterSet ? 'flex' : 'none';
+    const shown = results.length;
+    resultsCount.textContent = anyFilterSet
+        ? `Showing ${shown} of ${totalMatches} match${totalMatches === 1 ? '' : 'es'}`
+        : `Showing ${shown} of ${totalMatches} papers`;
+
+    results.forEach((r, i) => {
+        const card = document.createElement('div');
+        card.className = 'card';
+
+        const rank = document.createElement('div');
+        rank.className = 'rank';
+        rank.textContent = i + 1;
+
+        const body = document.createElement('div');
+        body.className = 'card-body';
+
+        const title = document.createElement('div');
+        title.className = 'card-title';
+        title.textContent = r.paper.title;
+
+        const tags = document.createElement('div');
+        tags.className = 'tags';
+
+        const domainTag = document.createElement('span');
+        domainTag.className = 'tag' + (r.matches.domain ? ' match' : '');
+        domainTag.textContent = r.paper.domain;
+        tags.appendChild(domainTag);
+
+        const methodTag = document.createElement('span');
+        methodTag.className = 'tag' + (r.matches.methodology ? ' match' : '');
+        methodTag.textContent = r.paper.methodology;
+        tags.appendChild(methodTag);
+
+        const authorTag = document.createElement('span');
+        authorTag.className = 'tag' + (r.matches.author ? ' match' : '');
+        authorTag.textContent = r.paper.author.replace(/_/g, ' ');
+        tags.appendChild(authorTag);
+
+        if (anyFilterSet) {
+            const score = document.createElement('span');
+            score.className = 'score-pill';
+            score.textContent = `${r.score}/3 matched`;
+            tags.appendChild(score);
+        }
+
+        body.appendChild(title);
+        body.appendChild(tags);
+        card.appendChild(rank);
+        card.appendChild(body);
+        resultsContainer.appendChild(card);
+    });
+}
+
+recommendBtn.addEventListener('click', recommend);
+
+resetBtn.addEventListener('click', () => {
+    domainSelect.value = '';
+    methodSelect.value = '';
+    authorSelect.value = '';
+    recommend();
+});
+
+loadData();
+</script>
+</body>
+</html>
