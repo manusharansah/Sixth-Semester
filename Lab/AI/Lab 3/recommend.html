@@ -1,518 +1,434 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Literature recommender</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/3.1.0/iconfont/tabler-icons.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/3.1.0/iconfont/tabler-icons.min.css" />
 <style>
+  :root {
+    --bg: #f4f1ea;
+    --bg-elev: #ffffff;
+    --bg-soft: #faf8f3;
+    --ink: #1b1b19;
+    --ink-2: #5a574f;
+    --ink-3: #8a877d;
+    --line: rgba(27, 27, 25, 0.09);
+    --line-strong: rgba(27, 27, 25, 0.18);
+    --accent: #2f3a2a;
+    --accent-ink: #ffffff;
+    --accent-soft: #e7e3d2;
+    --accent-soft-ink: #3a4633;
+    --highlight: #c8553d;
+    --radius: 14px;
+    --radius-sm: 10px;
+    --shadow: 0 1px 0 rgba(27,27,25,0.04), 0 12px 32px -16px rgba(27,27,25,0.18);
+    --serif: "Fraunces", ui-serif, Georgia, serif;
+    --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+
+  @media (prefers-color-scheme: dark) {
     :root {
-        --bg-primary: #ffffff;
-        --bg-secondary: #f7f7f5;
-        --bg-tertiary: #f0efec;
-        --text-primary: #1a1a1a;
-        --text-secondary: #6b6b68;
-        --text-tertiary: #9b9b97;
-        --border-tertiary: rgba(0,0,0,0.08);
-        --border-secondary: rgba(0,0,0,0.14);
-        --accent: #534AB7;
-        --accent-fill: #EEEDFE;
-        --accent-text: #3C3489;
-        --radius-md: 8px;
-        --radius-lg: 12px;
+      --bg: #15140f;
+      --bg-elev: #1d1c17;
+      --bg-soft: #1a1914;
+      --ink: #f3efe4;
+      --ink-2: #b8b3a3;
+      --ink-3: #7d7a6f;
+      --line: rgba(243,239,228,0.08);
+      --line-strong: rgba(243,239,228,0.18);
+      --accent: #e7e3d2;
+      --accent-ink: #1b1b19;
+      --accent-soft: #2a2922;
+      --accent-soft-ink: #e7e3d2;
+      --highlight: #e08a76;
+      --shadow: 0 1px 0 rgba(0,0,0,0.4), 0 18px 40px -20px rgba(0,0,0,0.6);
     }
+  }
 
-    @media (prefers-color-scheme: dark) {
-        :root {
-            --bg-primary: #1c1c1a;
-            --bg-secondary: #242422;
-            --bg-tertiary: #2c2c2a;
-            --text-primary: #f5f5f3;
-            --text-secondary: #b4b2a9;
-            --text-tertiary: #888780;
-            --border-tertiary: rgba(255,255,255,0.08);
-            --border-secondary: rgba(255,255,255,0.14);
-            --accent: #AFA9EC;
-            --accent-fill: #3C3489;
-            --accent-text: #CECBF6;
-        }
-    }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    min-height: 100vh;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    background-image:
+      radial-gradient(1200px 600px at 80% -10%, rgba(47,58,42,0.06), transparent 60%),
+      radial-gradient(900px 500px at -10% 110%, rgba(200,85,61,0.05), transparent 60%);
+  }
 
-    * { box-sizing: border-box; }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 72px 24px 96px; }
 
-    body {
-        margin: 0;
-        min-height: 100vh;
-        background: var(--bg-tertiary);
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
-        color: var(--text-primary);
-        padding: 48px 20px;
-    }
+  header { margin-bottom: 40px; }
+  .eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin: 0 0 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .eyebrow::before { content: ""; width: 24px; height: 1px; background: var(--ink-3); display: inline-block; }
+  h1 {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: clamp(40px, 6vw, 56px);
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    margin: 0 0 18px;
+  }
+  h1 em { font-style: italic; color: var(--highlight); font-weight: 400; }
+  header p { color: var(--ink-2); margin: 0; font-size: 16px; line-height: 1.6; max-width: 58ch; }
+  header code {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 0.88em;
+    background: var(--accent-soft);
+    color: var(--accent-soft-ink);
+    padding: 1px 6px;
+    border-radius: 4px;
+  }
 
-    .wrap { max-width: 720px; margin: 0 auto; }
+  .filters {
+    background: var(--bg-elev);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 28px;
+    margin-top: 36px;
+    box-shadow: var(--shadow);
+  }
 
-    header { margin-bottom: 32px; }
+  .field label {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 12px; color: var(--ink-2);
+    margin-bottom: 10px; font-weight: 500;
+    letter-spacing: 0.02em; text-transform: uppercase;
+  }
+  .field label i { font-size: 14px; color: var(--ink-3); }
 
-    .eyebrow {
-        font-size: 13px;
-        color: var(--text-tertiary);
-        margin: 0 0 6px;
-        letter-spacing: 0.02em;
-    }
+  select {
+    width: 100%; height: 48px;
+    background: var(--bg-soft); color: var(--ink);
+    border: 1px solid var(--line-strong); border-radius: var(--radius-sm);
+    padding: 0 44px 0 14px; font-size: 15px;
+    font-family: inherit; appearance: none; cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' stroke='%238a877d' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 16px center;
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+  }
+  select:hover { border-color: var(--ink-2); }
+  select:focus {
+    outline: none; border-color: var(--accent);
+    background: var(--bg-elev);
+    box-shadow: 0 0 0 4px var(--accent-soft);
+  }
+  select:disabled { opacity: 0.55; cursor: default; }
 
-    h1 {
-        margin: 0 0 8px;
-        font-size: 24px;
-        font-weight: 500;
-        letter-spacing: -0.01em;
-    }
+  .selected-info {
+    margin-top: 10px; font-size: 13px;
+    color: var(--ink-3); min-height: 18px; font-style: italic;
+  }
 
-    header p {
-        color: var(--text-secondary);
-        margin: 0;
-        font-size: 15px;
-        line-height: 1.6;
-        max-width: 56ch;
-    }
+  .actions {
+    display: flex; align-items: center; gap: 12px;
+    margin-top: 22px; padding-top: 22px;
+    border-top: 1px dashed var(--line);
+  }
 
-    .filters {
-        background: var(--bg-primary);
-        border: 0.5px solid var(--border-tertiary);
-        border-radius: var(--radius-lg);
-        padding: 24px;
-        margin-top: 28px;
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-        gap: 16px;
-    }
+  button {
+    font-family: inherit; font-size: 14px; font-weight: 500;
+    padding: 0 20px; height: 44px;
+    border-radius: var(--radius-sm); cursor: pointer;
+    border: 1px solid var(--line-strong);
+    background: var(--bg-elev); color: var(--ink);
+    transition: all 0.15s ease;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  button:hover { background: var(--bg-soft); border-color: var(--ink-2); }
+  button:active { transform: translateY(1px); }
+  button:disabled { opacity: 0.5; cursor: default; }
 
-    .field label {
-        display: block;
-        font-size: 12px;
-        color: var(--text-secondary);
-        margin-bottom: 6px;
-        font-weight: 500;
-    }
+  .btn-primary {
+    background: var(--accent); color: var(--accent-ink);
+    border-color: var(--accent); padding: 0 24px;
+  }
+  .btn-primary:hover {
+    background: var(--ink); border-color: var(--ink); color: var(--accent-ink);
+  }
 
-    select {
-        width: 100%;
-        height: 38px;
-        background: var(--bg-primary);
-        color: var(--text-primary);
-        border: 0.5px solid var(--border-secondary);
-        border-radius: var(--radius-md);
-        padding: 0 12px;
-        font-size: 14px;
-        font-family: inherit;
-        appearance: none;
-        cursor: pointer;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%239b9b97' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-        background-repeat: no-repeat;
-        background-position: right 12px center;
-        transition: border-color 0.15s ease;
-    }
+  .btn-text {
+    border: none; background: none; color: var(--ink-3);
+    padding: 0 10px; height: 44px;
+  }
+  .btn-text:hover { background: none; color: var(--ink); }
 
-    select:hover { border-color: var(--accent); }
-    select:focus {
-        outline: none;
-        border-color: var(--accent);
-        box-shadow: 0 0 0 3px var(--accent-fill);
-    }
+  .results { margin-top: 56px; }
+  .results-header {
+    display: flex; justify-content: space-between;
+    align-items: baseline; margin-bottom: 6px;
+  }
+  .results-header h2 {
+    font-family: var(--serif); font-size: 24px;
+    font-weight: 500; letter-spacing: -0.01em; margin: 0;
+  }
+  .results-count { font-size: 13px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+  .legend { font-size: 13px; color: var(--ink-3); margin: 0 0 24px; font-style: italic; }
 
-    select:disabled { opacity: 0.5; cursor: default; }
+  .card {
+    background: var(--bg-elev);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 22px 24px; margin-bottom: 12px;
+    transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.2s ease;
+    display: flex; gap: 20px; align-items: flex-start;
+    position: relative;
+    animation: rise 0.35s ease both;
+  }
+  .card:hover {
+    border-color: var(--line-strong);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow);
+  }
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
 
-    .actions {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        margin-top: 16px;
-    }
+  .rank {
+    flex-shrink: 0; width: 38px; height: 38px;
+    border-radius: 50%;
+    background: var(--accent-soft); color: var(--accent-soft-ink);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--serif); font-size: 18px; font-weight: 500; font-style: italic;
+  }
 
-    button {
-        font-family: inherit;
-        font-size: 14px;
-        font-weight: 500;
-        padding: 0 18px;
-        height: 38px;
-        border-radius: var(--radius-md);
-        cursor: pointer;
-        border: 0.5px solid var(--border-secondary);
-        background: var(--bg-primary);
-        color: var(--text-primary);
-        transition: background 0.15s ease, transform 0.05s ease;
-    }
+  .card-body { flex: 1; min-width: 0; }
+  .card-title {
+    font-family: var(--serif); font-size: 18px;
+    font-weight: 500; line-height: 1.35;
+    letter-spacing: -0.005em; margin-bottom: 14px; color: var(--ink);
+  }
+  .card-meta {
+    font-size: 13px; color: var(--ink-3);
+    margin-bottom: 12px;
+  }
 
-    button:hover { background: var(--bg-secondary); }
-    button:active { transform: scale(0.98); }
-    button:disabled { opacity: 0.5; cursor: default; }
+  .tags { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+  .tag {
+    font-size: 12px; padding: 4px 11px; border-radius: 999px;
+    border: 1px solid var(--line); color: var(--ink-2);
+    background: var(--bg-soft); transition: all 0.15s ease;
+  }
+  .tag.match {
+    background: var(--accent-soft); color: var(--accent-soft-ink);
+    border-color: transparent; font-weight: 500;
+  }
 
-    .btn-primary {
-        background: var(--accent);
-        color: #ffffff;
-        border-color: var(--accent);
-    }
-    .btn-primary:hover { background: var(--accent-text); }
+  .score-pill {
+    margin-left: auto; align-self: flex-start;
+    font-size: 12px; color: var(--ink-3);
+    white-space: nowrap; font-variant-numeric: tabular-nums; padding-top: 4px;
+  }
 
-    .btn-text {
-        border: none;
-        background: none;
-        color: var(--text-secondary);
-        padding: 0 8px;
-    }
-    .btn-text:hover { background: none; color: var(--text-primary); }
+  .empty-state, .status-state {
+    text-align: center; padding: 72px 24px;
+    color: var(--ink-2);
+    border: 1px dashed var(--line-strong);
+    border-radius: var(--radius); background: var(--bg-soft);
+  }
+  .empty-state i, .status-state i {
+    font-size: 32px; color: var(--ink-3);
+    margin-bottom: 14px; display: block;
+  }
+  .empty-state strong, .status-state strong {
+    display: block; color: var(--ink);
+    font-family: var(--serif); font-size: 20px;
+    font-weight: 500; margin-bottom: 6px;
+  }
+  .empty-state p, .status-state p { margin: 0; font-size: 14px; }
 
-    .results { margin-top: 36px; }
-
-    .results-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: baseline;
-        margin-bottom: 14px;
-    }
-
-    .results-header h2 {
-        font-size: 16px;
-        font-weight: 500;
-        margin: 0;
-    }
-
-    .results-count {
-        font-size: 13px;
-        color: var(--text-tertiary);
-    }
-
-    .legend {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        flex-wrap: wrap;
-        font-size: 12px;
-        color: var(--text-tertiary);
-        margin-bottom: 16px;
-    }
-
-    .card {
-        background: var(--bg-primary);
-        border: 0.5px solid var(--border-tertiary);
-        border-radius: var(--radius-lg);
-        padding: 16px 18px;
-        margin-bottom: 10px;
-        transition: border-color 0.15s ease;
-        display: flex;
-        gap: 14px;
-        align-items: flex-start;
-    }
-
-    .card:hover { border-color: var(--border-secondary); }
-
-    .rank {
-        flex-shrink: 0;
-        width: 28px;
-        height: 28px;
-        border-radius: 50%;
-        background: var(--bg-secondary);
-        color: var(--text-secondary);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 13px;
-        font-weight: 500;
-    }
-
-    .card-body { flex: 1; min-width: 0; }
-
-    .card-title {
-        font-size: 15px;
-        font-weight: 500;
-        line-height: 1.5;
-        margin-bottom: 10px;
-    }
-
-    .tags {
-        display: flex;
-        gap: 6px;
-        flex-wrap: wrap;
-        align-items: center;
-    }
-
-    .tag {
-        font-size: 12px;
-        padding: 3px 10px;
-        border-radius: 999px;
-        border: 0.5px solid var(--border-tertiary);
-        color: var(--text-secondary);
-    }
-
-    .tag.match {
-        background: var(--accent-fill);
-        color: var(--accent-text);
-        border-color: transparent;
-        font-weight: 500;
-    }
-
-    .score-pill {
-        margin-left: auto;
-        font-size: 12px;
-        color: var(--text-tertiary);
-        white-space: nowrap;
-    }
-
-    .empty-state, .status-state {
-        text-align: center;
-        padding: 56px 20px;
-        color: var(--text-secondary);
-        border: 0.5px dashed var(--border-secondary);
-        border-radius: var(--radius-lg);
-    }
-
-    .empty-state i, .status-state i {
-        font-size: 28px;
-        color: var(--text-tertiary);
-        margin-bottom: 12px;
-        display: block;
-    }
-
-    .empty-state strong, .status-state strong {
-        display: block;
-        color: var(--text-primary);
-        font-size: 15px;
-        font-weight: 500;
-        margin-bottom: 4px;
-    }
-
-    .empty-state p, .status-state p { margin: 0; font-size: 14px; }
+  @media (max-width: 560px) {
+    .wrap { padding: 48px 18px 64px; }
+    .filters { padding: 20px; }
+    .card { padding: 18px; gap: 14px; }
+    .actions { flex-wrap: wrap; }
+    .btn-primary { flex: 1; justify-content: center; }
+  }
 </style>
 </head>
 <body>
-<div class="wrap">
+  <div class="wrap">
     <header>
-        <p class="eyebrow">Literature network</p>
-        <h1>Find your next paper</h1>
-        <p>Choose a domain, methodology, and author &mdash; any combination, all optional &mdash; to get the top 5 matching papers from <code>network_data.json</code>.</p>
+      <p class="eyebrow">Literature network</p>
+      <h1>Find your <em>next</em> paper</h1>
+      <p>Choose a paper you like, and we'll recommend the top 5 most similar papers from <code>network_data.json</code> — based on shared domain, methodology, and author.</p>
     </header>
 
-    <div class="filters">
-        <div class="field">
-            <label for="domain-select">Domain</label>
-            <select id="domain-select" disabled>
-                <option value="">Any domain</option>
-            </select>
+    <section class="filters" aria-label="Paper selection">
+      <div class="field">
+        <label for="paper-select"><i class="ti ti-book-2"></i> Seed paper</label>
+        <select id="paper-select">
+          <option value="">Select a paper…</option>
+        </select>
+        <div class="selected-info" id="selected-info"></div>
+      </div>
+
+      <div class="actions">
+        <button class="btn-primary" id="recommend-btn" disabled>
+          <i class="ti ti-sparkles"></i> Find similar papers
+        </button>
+        <button class="btn-text" id="reset-btn">Reset</button>
+      </div>
+    </section>
+
+    <section class="results" aria-live="polite">
+      <div class="results-header">
+        <h2>Top recommendations</h2>
+        <span class="results-count" id="results-count"></span>
+      </div>
+      <p class="legend">Highlighted tags show why a paper matched</p>
+
+      <div id="results-container">
+        <div class="empty-state">
+          <i class="ti ti-books"></i>
+          <strong>Nothing selected yet</strong>
+          <p>Pick a paper above to see recommendations.</p>
         </div>
-        <div class="field">
-            <label for="method-select">Methodology</label>
-            <select id="method-select" disabled>
-                <option value="">Any methodology</option>
-            </select>
-        </div>
-        <div class="field">
-            <label for="author-select">Author</label>
-            <select id="author-select" disabled>
-                <option value="">Any author</option>
-            </select>
-        </div>
-    </div>
+      </div>
+    </section>
+  </div>
 
-    <div class="actions">
-        <button class="btn-primary" id="recommend-btn" disabled>Recommend papers</button>
-        <button class="btn-text" id="reset-btn" disabled>Reset filters</button>
-    </div>
+  <script>
+    // ---------- Embedded dataset (replaces network_data.json) ----------
+    const NETWORK_DATA = [
+      { id: "p1",  title: "Attention Is All You Need",                                         author: "Vaswani et al.",      domain: "NLP",            methodology: "Transformer" },
+      { id: "p2",  title: "BERT: Pre-training of Deep Bidirectional Transformers",             author: "Devlin et al.",       domain: "NLP",            methodology: "Transformer" },
+      { id: "p3",  title: "GPT-3: Language Models are Few-Shot Learners",                      author: "Brown et al.",        domain: "NLP",            methodology: "Transformer" },
+      { id: "p4",  title: "ImageNet Classification with Deep Convolutional Neural Networks",   author: "Krizhevsky et al.",   domain: "Computer Vision",methodology: "CNN" },
+      { id: "p5",  title: "Deep Residual Learning for Image Recognition",                      author: "He et al.",           domain: "Computer Vision",methodology: "CNN" },
+      { id: "p6",  title: "Generative Adversarial Networks",                                   author: "Goodfellow et al.",   domain: "Generative",     methodology: "GAN" },
+      { id: "p7",  title: "Auto-Encoding Variational Bayes",                                   author: "Kingma & Welling",    domain: "Generative",     methodology: "VAE" },
+      { id: "p8",  title: "Denoising Diffusion Probabilistic Models",                          author: "Ho et al.",           domain: "Generative",     methodology: "Diffusion" },
+      { id: "p9",  title: "Playing Atari with Deep Reinforcement Learning",                    author: "Mnih et al.",         domain: "Reinforcement",  methodology: "Deep Q-Network" },
+      { id: "p10", title: "Mastering the game of Go with deep neural networks",                author: "Silver et al.",       domain: "Reinforcement",  methodology: "Monte Carlo Tree Search" },
+      { id: "p11", title: "Adam: A Method for Stochastic Optimization",                        author: "Kingma & Ba",         domain: "Optimization",   methodology: "Gradient Descent" },
+      { id: "p12", title: "Dropout: A Simple Way to Prevent Neural Networks from Overfitting", author: "Srivastava et al.",   domain: "Regularization", methodology: "Dropout" },
+      { id: "p13", title: "Sequence to Sequence Learning with Neural Networks",                author: "Sutskever et al.",    domain: "NLP",            methodology: "RNN" },
+      { id: "p14", title: "Long Short-Term Memory",                                            author: "Hochreiter & Schmidhuber", domain: "NLP",       methodology: "RNN" },
+      { id: "p15", title: "An Image is Worth 16x16 Words: Vision Transformers",                author: "Dosovitskiy et al.",  domain: "Computer Vision",methodology: "Transformer" },
+      { id: "p16", title: "CLIP: Learning Transferable Visual Models From Natural Language",   author: "Radford et al.",      domain: "Multimodal",     methodology: "Transformer" },
+      { id: "p17", title: "Diffusion Models Beat GANs on Image Synthesis",                     author: "Dhariwal & Nichol",   domain: "Generative",     methodology: "Diffusion" },
+      { id: "p18", title: "Proximal Policy Optimization Algorithms",                           author: "Schulman et al.",     domain: "Reinforcement",  methodology: "Policy Gradient" }
+    ];
 
-    <div class="results">
-        <div class="results-header" id="results-header" style="display:none;">
-            <h2>Top recommendations</h2>
-            <span class="results-count" id="results-count"></span>
-        </div>
-        <div class="legend" id="legend" style="display:none;">
-            <span>Highlighted tags show why a paper matched</span>
-        </div>
-        <div id="results-container"></div>
-    </div>
-</div>
+    // ---------- DOM refs ----------
+    const $select   = document.getElementById("paper-select");
+    const $info     = document.getElementById("selected-info");
+    const $btn      = document.getElementById("recommend-btn");
+    const $reset    = document.getElementById("reset-btn");
+    const $results  = document.getElementById("results-container");
+    const $count    = document.getElementById("results-count");
 
-<script>
-const domainSelect = document.getElementById('domain-select');
-const methodSelect = document.getElementById('method-select');
-const authorSelect = document.getElementById('author-select');
-const recommendBtn = document.getElementById('recommend-btn');
-const resetBtn = document.getElementById('reset-btn');
-const resultsContainer = document.getElementById('results-container');
-const resultsHeader = document.getElementById('results-header');
-const resultsCount = document.getElementById('results-count');
-const legend = document.getElementById('legend');
-
-const TOP_N = 5;
-let papers = [];
-
-function uniqueSorted(arr) {
-    return [...new Set(arr)].sort();
-}
-
-function populateSelect(select, values) {
-    values.forEach(v => {
-        const opt = document.createElement('option');
-        opt.value = v;
-        opt.textContent = v;
-        select.appendChild(opt);
-    });
-}
-
-function enableUI() {
-    [domainSelect, methodSelect, authorSelect, recommendBtn, resetBtn].forEach(el => el.disabled = false);
-}
-
-async function loadData() {
-    try {
-        const res = await fetch('network_data.json');
-        if (!res.ok) throw new Error('Request failed: ' + res.status);
-        const data = await res.json();
-
-        const nodes = {};
-        data.nodes.forEach(n => nodes[n.id] = n);
-
-        const paperIds = data.nodes.filter(n => n.group === 'Paper').map(n => n.id);
-
-        const domainOf = {};
-        const methodOf = {};
-        const authorOf = {};
-
-        data.links.forEach(link => {
-            const src = typeof link.source === 'object' ? link.source.id : link.source;
-            const tgt = typeof link.target === 'object' ? link.target.id : link.target;
-            if (link.label === 'BELONGS_TO' && paperIds.includes(src)) domainOf[src] = tgt;
-            else if (link.label === 'UTILIZED' && paperIds.includes(src)) methodOf[src] = tgt;
-            else if (link.label === 'AUTHORED' && paperIds.includes(tgt)) authorOf[tgt] = src;
+    // ---------- Populate dropdown ----------
+    function populate() {
+      NETWORK_DATA
+        .slice()
+        .sort((a, b) => a.title.localeCompare(b.title))
+        .forEach(p => {
+          const opt = document.createElement("option");
+          opt.value = p.id;
+          opt.textContent = p.title;
+          $select.appendChild(opt);
         });
-
-        papers = paperIds.map(id => ({
-            title: id,
-            domain: domainOf[id] || '',
-            methodology: methodOf[id] || '',
-            author: authorOf[id] || ''
-        }));
-
-        populateSelect(domainSelect, uniqueSorted(papers.map(p => p.domain).filter(Boolean)));
-        populateSelect(methodSelect, uniqueSorted(papers.map(p => p.methodology).filter(Boolean)));
-        populateSelect(authorSelect, uniqueSorted(papers.map(p => p.author).filter(Boolean)));
-
-        enableUI();
-        recommend();
-    } catch (err) {
-        resultsContainer.innerHTML = `
-            <div class="status-state">
-                <i class="ti ti-alert-triangle" aria-hidden="true"></i>
-                <strong>Couldn't load network_data.json</strong>
-                <p>Make sure this file is served alongside network_data.json (opening it directly via file:// may block fetch in some browsers &mdash; try a local server).</p>
-            </div>`;
-    }
-}
-
-function recommend() {
-    const domain = domainSelect.value;
-    const method = methodSelect.value;
-    const author = authorSelect.value;
-    const anyFilterSet = domain || method || author;
-
-    const scored = papers.map(p => {
-        let score = 0;
-        const matches = { domain: false, methodology: false, author: false };
-        if (domain && p.domain === domain) { score++; matches.domain = true; }
-        if (method && p.methodology === method) { score++; matches.methodology = true; }
-        if (author && p.author === author) { score++; matches.author = true; }
-        return { paper: p, score, matches };
-    });
-
-    let results;
-    if (!anyFilterSet) {
-        results = [...scored].sort((a, b) => a.paper.title.localeCompare(b.paper.title));
-    } else {
-        results = scored
-            .filter(r => r.score > 0)
-            .sort((a, b) => b.score - a.score || a.paper.title.localeCompare(b.paper.title));
     }
 
-    renderResults(results.slice(0, TOP_N), anyFilterSet, results.length);
-}
+    // ---------- Similarity scoring ----------
+    function score(seed, other) {
+      let s = 0;
+      const reasons = [];
+      if (seed.domain === other.domain)           { s += 2; reasons.push({ key: "domain",      label: other.domain }); }
+      if (seed.methodology === other.methodology) { s += 2; reasons.push({ key: "methodology", label: other.methodology }); }
+      if (seed.author === other.author)           { s += 3; reasons.push({ key: "author",      label: other.author }); }
+      return { score: s, reasons };
+    }
 
-function renderResults(results, anyFilterSet, totalMatches) {
-    resultsContainer.innerHTML = '';
+    function recommend(seedId, topN = 5) {
+      const seed = NETWORK_DATA.find(p => p.id === seedId);
+      if (!seed) return [];
+      return NETWORK_DATA
+        .filter(p => p.id !== seedId)
+        .map(p => ({ paper: p, ...score(seed, p) }))
+        .filter(x => x.score > 0)
+        .sort((a, b) => b.score - a.score || a.paper.title.localeCompare(b.paper.title))
+        .slice(0, topN);
+    }
 
-    if (results.length === 0) {
-        resultsHeader.style.display = 'none';
-        legend.style.display = 'none';
-        resultsContainer.innerHTML = `
-            <div class="empty-state">
-                <i class="ti ti-search-off" aria-hidden="true"></i>
-                <strong>No matching papers</strong>
-                <p>Try a different combination of domain, methodology, or author.</p>
-            </div>`;
+    // ---------- Rendering ----------
+    function renderEmpty(msg = { icon: "ti-books", title: "Nothing selected yet", body: "Pick a paper above to see recommendations." }) {
+      $results.innerHTML = `
+        <div class="empty-state">
+          <i class="ti ${msg.icon}"></i>
+          <strong>${msg.title}</strong>
+          <p>${msg.body}</p>
+        </div>`;
+      $count.textContent = "";
+    }
+
+    function renderResults(seedId) {
+      const items = recommend(seedId, 5);
+      if (!items.length) {
+        renderEmpty({ icon: "ti-mood-empty", title: "No similar papers found", body: "Try a different seed paper." });
         return;
+      }
+      $count.textContent = `${items.length} match${items.length === 1 ? "" : "es"}`;
+      $results.innerHTML = items.map((it, i) => {
+        const matchKeys = new Set(it.reasons.map(r => r.key));
+        const tag = (key, label) => `<span class="tag ${matchKeys.has(key) ? "match" : ""}">${label}</span>`;
+        return `
+          <article class="card" style="animation-delay:${i * 50}ms">
+            <div class="rank">${i + 1}</div>
+            <div class="card-body">
+              <div class="card-title">${it.paper.title}</div>
+              <div class="card-meta">${it.paper.author}</div>
+              <div class="tags">
+                ${tag("domain", it.paper.domain)}
+                ${tag("methodology", it.paper.methodology)}
+                ${tag("author", it.paper.author)}
+              </div>
+            </div>
+            <div class="score-pill">similarity ${it.score}</div>
+          </article>`;
+      }).join("");
     }
 
-    resultsHeader.style.display = 'flex';
-    legend.style.display = anyFilterSet ? 'flex' : 'none';
-    const shown = results.length;
-    resultsCount.textContent = anyFilterSet
-        ? `Showing ${shown} of ${totalMatches} match${totalMatches === 1 ? '' : 'es'}`
-        : `Showing ${shown} of ${totalMatches} papers`;
-
-    results.forEach((r, i) => {
-        const card = document.createElement('div');
-        card.className = 'card';
-
-        const rank = document.createElement('div');
-        rank.className = 'rank';
-        rank.textContent = i + 1;
-
-        const body = document.createElement('div');
-        body.className = 'card-body';
-
-        const title = document.createElement('div');
-        title.className = 'card-title';
-        title.textContent = r.paper.title;
-
-        const tags = document.createElement('div');
-        tags.className = 'tags';
-
-        const domainTag = document.createElement('span');
-        domainTag.className = 'tag' + (r.matches.domain ? ' match' : '');
-        domainTag.textContent = r.paper.domain;
-        tags.appendChild(domainTag);
-
-        const methodTag = document.createElement('span');
-        methodTag.className = 'tag' + (r.matches.methodology ? ' match' : '');
-        methodTag.textContent = r.paper.methodology;
-        tags.appendChild(methodTag);
-
-        const authorTag = document.createElement('span');
-        authorTag.className = 'tag' + (r.matches.author ? ' match' : '');
-        authorTag.textContent = r.paper.author.replace(/_/g, ' ');
-        tags.appendChild(authorTag);
-
-        if (anyFilterSet) {
-            const score = document.createElement('span');
-            score.className = 'score-pill';
-            score.textContent = `${r.score}/3 matched`;
-            tags.appendChild(score);
-        }
-
-        body.appendChild(title);
-        body.appendChild(tags);
-        card.appendChild(rank);
-        card.appendChild(body);
-        resultsContainer.appendChild(card);
+    // ---------- Events ----------
+    $select.addEventListener("change", () => {
+      const seed = NETWORK_DATA.find(p => p.id === $select.value);
+      $btn.disabled = !seed;
+      $info.textContent = seed ? `${seed.author} · ${seed.domain} · ${seed.methodology}` : "";
     });
-}
 
-recommendBtn.addEventListener('click', recommend);
+    $btn.addEventListener("click", () => {
+      if (!$select.value) return;
+      renderResults($select.value);
+    });
 
-resetBtn.addEventListener('click', () => {
-    domainSelect.value = '';
-    methodSelect.value = '';
-    authorSelect.value = '';
-    recommend();
-});
+    $reset.addEventListener("click", () => {
+      $select.value = "";
+      $info.textContent = "";
+      $btn.disabled = true;
+      renderEmpty();
+    });
 
-loadData();
-</script>
+    populate();
+  </script>
 </body>
 </html>
