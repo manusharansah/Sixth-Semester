@@ -1,4 +1,4 @@
-# Lab Report: Titanic Survival Prediction — Classical ML vs. Deep Learning (PyTorch)
+# Lab Report: Titanic Survival Prediction — Classical ML vs. Deep Learning (PyTorch II)
 
 ## 1. Objective
 
