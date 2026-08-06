@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+
+# Virtual environments (never commit these - install fresh with requirements.txt)
+venv/
+.venv/
+env/
+
+# OS junk
+.DS_Store
+__MACOSX/
+Thumbs.db
+
+# Generated outputs (regenerate by running main.py)
+outputs/*
+!outputs/.gitkeep
+
+# Editor
+.vscode/
+.idea/

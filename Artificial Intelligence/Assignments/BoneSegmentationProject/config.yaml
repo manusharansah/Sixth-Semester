@@ -1,0 +1,33 @@
+# Bone Segmentation Pipeline - configuration
+# Any value here overrides the built-in default in src/bone_segmentation/config.py.
+# CLI flags (see `python main.py --help`) override whatever is set here.
+
+preprocessing:
+  gaussian_kernel: 5        # odd integer, larger = more blur/denoising
+  clahe_clip_limit: 2.0     # CLAHE contrast limiting factor
+  clahe_tile_grid: 8        # CLAHE tile grid size (NxN)
+
+edge_detection:
+  canny_low: 50
+  canny_high: 150
+
+segmentation:
+  method: otsu               # "otsu" or "adaptive"
+  adaptive_block_size: 35    # only used when method: adaptive
+  adaptive_c: 5               # only used when method: adaptive
+
+morphology:
+  kernel_size: 5
+  min_area: 500               # discard connected components smaller than this (px^2)
+  fill_holes: true
+
+components:
+  use_watershed: false        # set true to attempt splitting touching/overlapping bones
+  watershed_min_distance: 15
+
+numbering:
+  sort_by: reading_order      # "reading_order" (top-to-bottom, left-to-right) or "area_desc"
+
+output:
+  save_intermediate: true
+  make_overlay_on_original: true
