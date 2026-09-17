@@ -1,6 +1,6 @@
 <div align="center">
 
-# 📚 BE Computer Engineering — Sixth Semester (New Course)
+# 📚 BE Computer Engineering — Sixth Semester
 ### Advanced College of Engineering and Management (ACEM)
 **Institute of Engineering (IOE) · Tribhuvan University (TU)**
 
